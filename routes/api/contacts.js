@@ -1,88 +1,94 @@
 const express = require('express');
-const models = require('../../models/contacts');
+// const models = require('../../models/contacts');
 
-const Joi = require('joi');
-const contactShema = Joi.object({
-  name: Joi.string().min(2).required(),
-  phone: Joi.string().min(2).required(),
-  email: Joi.string().email().required(),
-});
+const { ctrlWrapper } = require('../../middlewares');
+const { contacts: ctrl } = require('../../controllers');
+
+// const Joi = require('joi');
+// const contactShema = Joi.object({
+//   name: Joi.string().min(2).required(),
+//   phone: Joi.string().min(2).required(),
+//   email: Joi.string().email().required(),
+// });
 const router = express.Router();
-const getError = (status = 400, message = '') => {
-  const error = new Error(message);
-  error.status = status;
-  return error;
-};
+// const getError = (status = 400, message = '') => {
+//   const error = new Error(message);
+//   error.status = status;
+//   return error;
+// };
+router.get('/', ctrlWrapper(ctrl.getAll));
+// router.get('/', (req, res) => {
+//   console.log('req', req);
+// });
+// router.get('/', async (req, res, next) => {
+//   const contacts = await models.listContacts();
+//   console.log('get all contacts', contacts);
+//   res.status(200).json({ message: 'get all contacts', data: { contacts } });
+// });
+router.get('/:contactId');
+// router.get('/:contactId', async (req, res, next) => {
+//   try {
+//     const { contactId } = req.params;
 
-router.get('/', async (req, res, next) => {
-  const contacts = await models.listContacts();
-  console.log('get all contacts', contacts);
-  res.status(200).json({ message: 'get all contacts', data: { contacts } });
-});
+//     const contact = await models.getContactById(contactId);
 
-router.get('/:contactId', async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
+//     if (!contact) throw getError(404, 'Not found');
 
-    const contact = await models.getContactById(contactId);
+//     // console.log("get contacts by id", req.params, contactId);
+//     res.status(200).json({ message: 'get contacts by id', data: { contact } });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+router.post('/', ctrlWrapper(ctrl.add));
+// router.post('/', async (req, res, next) => {
+//   try {
+//     const { body } = req;
+//     const { error } = contactShema.validate(body);
+//     if (error) {
+//       error.status = 400;
+//       throw error;
+//     }
 
-    if (!contact) throw getError(404, 'Not found');
+//     const contact = await models.addContact(body);
 
-    // console.log("get contacts by id", req.params, contactId);
-    res.status(200).json({ message: 'get contacts by id', data: { contact } });
-  } catch (error) {
-    next(error);
-  }
-});
+//     console.log(contact);
 
-router.post('/', async (req, res, next) => {
-  try {
-    const { body } = req;
-    const { error } = contactShema.validate(body);
-    if (error) {
-      error.status = 400;
-      throw error;
-    }
+//     res.status(201).json({ message: 'post item now', data: { contact } });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+router.delete('/:contactId');
+// router.delete('/:contactId', async (req, res, next) => {
+//   try {
+//     const { contactId } = req.params;
 
-    const contact = await models.addContact(body);
+//     const contact = await models.removeContact(contactId);
+//     console.log(contact);
+//     if (!contact) throw getError(404, 'Not found');
+//     res.json({ message: 'contact deleted', data: { contact } });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+router.put('/:contactId');
+// router.put('/:contactId', async (req, res, next) => {
+//   try {
+//     const { body } = req;
+//     const { error } = contactShema.validate(body);
+//     if (error) {
+//       error.status = 400;
+//       throw error;
+//     }
+//     const { contactId } = req.params;
 
-    console.log(contact);
-
-    res.status(201).json({ message: 'post item now', data: { contact } });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.delete('/:contactId', async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-
-    const contact = await models.removeContact(contactId);
-    console.log(contact);
-    if (!contact) throw getError(404, 'Not found');
-    res.json({ message: 'contact deleted', data: { contact } });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.put('/:contactId', async (req, res, next) => {
-  try {
-    const { body } = req;
-    const { error } = contactShema.validate(body);
-    if (error) {
-      error.status = 400;
-      throw error;
-    }
-    const { contactId } = req.params;
-
-    const contact = await models.updateContact(contactId, body);
-    console.log(contact);
-    res.json({ message: 'put by id', data: { contact } });
-  } catch (error) {
-    next(error);
-  }
-});
+//     const contact = await models.updateContact(contactId, body);
+//     console.log(contact);
+//     res.json({ message: 'put by id', data: { contact } });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 module.exports = router;
