@@ -1,6 +1,7 @@
-const express = require('express');
 const logger = require('morgan');
+const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 
 const contactsRouter = require('./routes/api/contacts');
 
@@ -19,6 +20,7 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   const { status = 500 } = err;
+  console.dir(err);
   res.status(status).json({ message: err.message });
 });
 
